@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            border: 0;
+        }
+
+        .box {
+            width: 500px;
+            height: 200px;
+            padding: 7px;
+            border: 1px solid #ccc;
+            margin: 200px auto;
+            position: relative;
+            overflow:hidden;
+        }
+
+        .screen {
+            width: 500px;
+            height: 200px;
+            position: relative;
+        }
+
+        .screen ul {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3000px;
+        }
+
+        .screen ul li {
+            width: 500px;
+            height: 200px;
+            overflow: hidden;
+            float: left;
+        }
+        .screen ol{
+            position: absolute;
+            right:50%;
+            margin-right:-80px;
+            bottom:10px;
+            line-height: 20px;
+            text-align:center;
+        }
+        .screen ol li{
+            float: left;
+            width:20px;
+            height:20px;
+            background:#fff;
+            border:1px solid #ccc;
+            margin-left:10px;
+            cursor:pointer;
+            border-radius:50%;
+        }
+        .screen ol .current{
+            background-color:yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box" id="box">
+        <div class="screen">
+            <ul class="inner">
+                <li><a href="#"><img src="picture/tu1.jpg" alt=""></a></li>
+                <li><a href="#"><img src="picture/tu2.jpg" alt=""></a></li>
+                <li><a href="#"><img src="picture/tu3.jpg" alt=""></a></li>
+                <li><a href="#"><img src="picture/tu4.jpg" alt=""></a></li>
+                <li><a href="#"><img src="picture/tu5.jpg" alt=""></a></li>
+            </ul>
+            <ol></ol>
+        </div>
+    </div>
+</body>
+<script>
+    var timer = null;
+    var box = document.getElementById('box');
+    var screen = box.children[0];
+    var ul = screen.children[0];
+    var ulLis = ul.children;
+    // console.log(ulLis);
+    var ol = screen.children[1];
+    var imgWidth = screen.offsetWidth;
+
+    for(var i = 0; i < ulLis.length; i++){
+        var li = document.createElement("li");
+        li.innerHTML = i + 1;
+        ol.appendChild(li);
+    }
+    var olLis = ol.children;
+    olLis[0].className = "current";
+    var firstImg = ulLis[0].cloneNode(true);
+    ul.appendChild(firstImg);
+
+    for(var s = 0; s < olLis.length; s++){
+        olLis[s].index = s;
+        olLis[s].onmouseover = function (){
+            for(var i = 0; i < olLis.length; i++){
+                olLis[i].className = " ";
+            }
+            this.className = "current";
+
+            var target = -this.index * imgWidth;
+            animate(ul,target);
+            pic = square = this.index;
+        }
+    }
+
+    var pic = 0;
+    var square = 0;
+
+    timer = setInterval(playNext,1000);
+    function playNext(){
+        if(pic === ulLis.length - 1){
+            ul.style.left = 0;
+            pic = 0;
+        }
+        pic ++;
+        var target = -pic * imgWidth;
+        animate(ul,target);
+
+        if(square < olLis.length - 1){
+            square++;
+        }else{
+            square = 0;
+        }
+
+        for(var i = 0; i < olLis.length; i++){
+            olLis[i].className = " ";
+        }
+        olLis[square].className = "current";
+    }
+
+
+
+
+    function animate(obj, target) {
+        clearInterval(obj.timer);
+        obj.timer = setInterval(function () {
+            var leader = obj.offsetLeft;
+            var step = 30;
+            step = leader < target ? step : -step;
+            if (Math.abs(target - leader) >= Math.abs(step)) {
+                leader = leader + step;
+                obj.style.left = leader + "px";
+            } else {
+                obj.style.left = target + "px";
+                clearInterval(obj.timer);
+            }
+        }, 15);
+    }
+</script>
+
+</html>
